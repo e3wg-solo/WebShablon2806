@@ -74,6 +74,12 @@ const services: Service[] = [
     name: 'Солярий',
     description: 'Безопасный загар в комфортных условиях',
     image: "/services/solarium.webp"
+  },
+  {
+    id: 'epilation',
+    name: 'Эпиляция',
+    description: 'Биоэпиляция воском и лазерная эпиляция',
+    image: "/services/epilation.webp"
   }
 ];
 

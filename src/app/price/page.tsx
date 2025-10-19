@@ -20,6 +20,7 @@ const serviceNames: { [key: string]: string } = {
   'tattoo': 'Татуаж',
   'makeup': 'Макияж',
   'solarium': 'Солярий',
+  'epilation': 'Эпиляция',
 };
 
 function PricePageContent() {
