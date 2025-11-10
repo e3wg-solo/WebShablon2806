@@ -40,8 +40,11 @@ export function BackgroundImageSlider() {
             alt={`Beauty salon portrait ${currentImageIndex + 1}`}
             fill
             className="object-cover"
+            style={{
+              objectPosition: currentImageIndex === 0 ? "center 60%" : "center center"
+            }}
             priority={currentImageIndex === 0}
-            quality={90}
+            quality={100}
           />
           {/* Темное наложение для улучшения читаемости текста */}
           <div className="absolute inset-0 bg-black/40" />

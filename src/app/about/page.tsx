@@ -38,6 +38,7 @@ export default function AboutUsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
+  const [isSwiping, setIsSwiping] = useState(false);
 
   const handleApiChange = useCallback((api: EmblaCarouselType | undefined) => {
     setEmblaApi(api || null);
@@ -79,24 +80,49 @@ export default function AboutUsPage() {
   const handleTouchStart = (e: React.TouchEvent) => {
     setTouchEnd(null);
     setTouchStart(e.targetTouches[0].clientX);
+    setIsSwiping(false);
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
-    setTouchEnd(e.targetTouches[0].clientX);
+    if (!touchStart) return;
+    const currentTouch = e.targetTouches[0].clientX;
+    setTouchEnd(currentTouch);
+    
+    // Определяем, что это свайп (движение больше 10px)
+    const distance = Math.abs(touchStart - currentTouch);
+    if (distance > 10) {
+      setIsSwiping(true);
+    }
   };
 
-  const handleTouchEnd = () => {
-    if (!touchStart || !touchEnd) return;
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (!touchStart) return;
     
-    const distance = touchStart - touchEnd;
-    const isLeftSwipe = distance > 50;
-    const isRightSwipe = distance < -50;
+    // Если не было движения, это тап
+    if (!touchEnd || !isSwiping) {
+      // Проверяем, что тап был по фону, а не по изображению
+      const target = e.target as HTMLElement;
+      const isImage = target.tagName === 'IMG' || target.closest('img');
+      if (!isImage) {
+        closeModal();
+      }
+    } else {
+      // Обработка свайпа
+      const distance = touchStart - touchEnd;
+      const isLeftSwipe = distance > 50;
+      const isRightSwipe = distance < -50;
 
-    if (isLeftSwipe) {
-      goToNext();
-    } else if (isRightSwipe) {
-      goToPrevious();
+      if (isLeftSwipe) {
+        goToNext();
+      } else if (isRightSwipe) {
+        goToPrevious();
+      }
     }
+    
+    // Сброс состояния
+    setTouchStart(null);
+    setTouchEnd(null);
+    setIsSwiping(false);
   };
 
   useEffect(() => {
@@ -345,10 +371,11 @@ export default function AboutUsPage() {
                           <Image
                             src={photo}
                             alt={`Gallery ${index + 1}`}
-                            width={800}
-                            height={450}
+                            width={1000}
+                            height={600}
+                            quality={100}
                             className="object-cover w-full h-auto rounded-2xl"
-                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1000px"
                             loading={index === 0 ? 'eager' : 'lazy'}
                             priority={index === 0}
                             placeholder="blur"
@@ -388,78 +415,67 @@ export default function AboutUsPage() {
         </div>
       </section>
 
-      {/* Видео о том как мы открывались */}
-      <section className="py-8 sm:py-8 bg-background">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto">
-            <FadeInUp>
-              <div className="text-center mb-16">
-                <h2 className="text-3xl sm:text-4xl font-bold mb-6">
-                  Посмотрите видео о том, как мы открывались
-                </h2>
-                <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-                  Узнайте больше о нашем пути и том, как создавался TOPICONIC
-                </p>
-              </div>
-            </FadeInUp>
-
-            <FadeInUp delay={0.2}>
-              <div className="relative w-full aspect-video rounded-2xl overflow-hidden shadow-2xl">
-                <iframe
-                  src="https://www.youtube.com/embed/rqBXRBTpyJ0?si=XXuMCtRUrMryaH_i"
-                  title="Как мы открывались - TOPICONIC"
-                  className="absolute inset-0 w-full h-full"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                  referrerPolicy="strict-origin-when-cross-origin"
-                  allowFullScreen
-                />
-              </div>
-            </FadeInUp>
-
-            <FadeInUp delay={0.4}>
-              <div className="text-center mt-8">
-              </div>
-            </FadeInUp>
-          </div>
-        </div>
-      </section>
-
       {/* Modal for full-screen image */}
       {isModalOpen && selectedImage !== null && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-90 backdrop-blur-sm">
-          {/* Close button */}
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/95 backdrop-blur-sm">
+          {/* Close button - visible on all devices */}
           <Button
             variant="ghost"
             size="icon"
             onClick={closeModal}
-            className="absolute top-4 right-4 z-60 text-white hover:bg-white/20 h-12 w-12"
+            className="fixed top-20 right-4 z-[10001] sm:top-20 sm:right-4 z-[10001] text-white bg-black/80 hover:bg-white/40 border-2 border-white/30 h-10 w-10 sm:h-10 sm:w-10 rounded-full transition-all duration-200 shadow-2xl"
+            aria-label="Закрыть"
           >
-            <X className="h-6 w-6" />
+            <X className="h-8 w-8 sm:h-6 sm:w-6 stroke-[3]" />
           </Button>
 
-          {/* Previous button - hidden on mobile */}
+          {/* Previous button - visible on desktop */}
           <Button
             variant="ghost"
             size="icon"
             onClick={goToPrevious}
-            className="absolute left-4 top-1/2 transform -translate-y-1/2 z-60 text-white hover:bg-white/20 h-12 w-12 hidden sm:flex"
+            className="fixed left-4 top-1/2 transform -translate-y-1/2 z-[10000] text-white bg-black/80 hover:bg-white/40 border-2 border-white/30 h-12 w-12 rounded-full hidden sm:flex transition-all duration-200 shadow-2xl"
+            aria-label="Предыдущее фото"
           >
             <ChevronLeft className="h-6 w-6" />
           </Button>
 
-          {/* Next button - hidden on mobile */}
+          {/* Next button - visible on desktop */}
           <Button
             variant="ghost"
             size="icon"
             onClick={goToNext}
-            className="absolute right-4 top-1/2 transform -translate-y-1/2 z-60 text-white hover:bg-white/20 h-12 w-12 hidden sm:flex"
+            className="fixed right-4 top-1/2 transform -translate-y-1/2 z-[10000] text-white bg-black/80 hover:bg-white/40 border-2 border-white/30 h-12 w-12 rounded-full hidden sm:flex transition-all duration-200 shadow-2xl"
+            aria-label="Следующее фото"
           >
             <ChevronRight className="h-6 w-6" />
           </Button>
 
+          {/* Mobile navigation buttons */}
+          <div className="fixed bottom-20 left-0 right-0 flex justify-center gap-4 z-[10000] sm:hidden">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={goToPrevious}
+              className="text-white bg-black/80 hover:bg-white/40 border-2 border-white/30 h-12 w-12 rounded-full transition-all duration-200 shadow-2xl"
+              aria-label="Предыдущее фото"
+            >
+              <ChevronLeft className="h-6 w-6" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={goToNext}
+              className="text-white bg-black/80 hover:bg-white/40 border-2 border-white/30 h-12 w-12 rounded-full transition-all duration-200 shadow-2xl"
+              aria-label="Следующее фото"
+            >
+              <ChevronRight className="h-6 w-6" />
+            </Button>
+          </div>
+
           {/* Image container */}
           <div 
-            className="relative w-full h-full flex items-center justify-center p-4 sm:p-8"
+            className="relative w-full h-full flex items-center justify-center p-2 sm:p-4"
             onClick={closeModal}
             onTouchStart={handleTouchStart}
             onTouchMove={handleTouchMove}
@@ -472,20 +488,22 @@ export default function AboutUsPage() {
               <Image
                 src={teamPhotos[selectedImage]}
                 alt={`Gallery ${selectedImage + 1}`}
-                width={1200}
-                height={800}
-                className="w-auto h-auto max-w-[90vw] max-h-[90vh] object-contain rounded-lg"
+                width={2560}
+                height={1440}
+                quality={100}
+                className="w-auto h-auto max-w-[92vw] max-h-[75vh] sm:max-w-[95vw] sm:max-h-[90vh] object-contain rounded-lg select-none"
                 loading="lazy"
+                draggable={false}
               />
               
               {/* Image counter */}
-              <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black/50 text-white px-3 py-1 rounded-full text-sm">
+              <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-black/70 text-white px-4 py-2 rounded-full text-sm font-medium z-[10000] shadow-lg">
                 {selectedImage + 1} / {teamPhotos.length}
               </div>
 
-              {/* Mobile swipe indicator */}
-              <div className="absolute bottom-16 left-1/2 transform -translate-x-1/2 text-white/60 text-xs sm:hidden">
-                Свайпните влево или вправо для навигации
+              {/* Mobile swipe hint */}
+              <div className="fixed bottom-36 left-1/2 transform -translate-x-1/2 text-white/60 text-xs sm:hidden z-[10000] bg-black/50 px-3 py-1 rounded-full">
+                Свайпните для навигации
               </div>
             </div>
           </div>

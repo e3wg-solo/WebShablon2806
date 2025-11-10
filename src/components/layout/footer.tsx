@@ -165,6 +165,14 @@ export function Footer() {
                   Солярий
                 </Link>
               </li>
+              <li>
+                <Link 
+                  href="/price?service=epilation"
+                  className="text-muted-foreground hover:text-brand-primary transition-colors"
+                >
+                  Эпиляция
+                </Link>
+              </li>
             </ul>
           </div>
         </div>

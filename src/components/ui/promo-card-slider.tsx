@@ -20,83 +20,51 @@ interface PromoCard {
 const promoCards: PromoCard[] = [
   {
     id: 1,
-    title: "10 сеансов массажа лица и спины",
-    description: "Комплексный массаж для лица и спины",
-    discount: "15000₽",
-    validUntil: "вместо 17000₽",
+    title: "Эпиляция зоны бикини + подмышки",
+    description: "Комплексная эпиляция двух зон по специальной цене",
+    discount: "-20%",
+    validUntil: "экономия до 800₽",
     color: "primary"
   },
   {
     id: 2,
-    title: "10 сеансов массажа лица",
-    description: "Курс массажа для лица",
-    discount: "10000₽",
-    validUntil: "вместо 13000₽",
-    color: "primary"
+    title: "Аппаратная косметология лица",
+    description: "Курс из 5 процедур на выбор: RF-лифтинг, микротоки, фонофорез",
+    discount: "12000₽",
+    validUntil: "вместо 15000₽",
+    color: "accent"
   },
   {
     id: 3,
-    title: "Антивозрастная пластика лица",
-    description: "Эффективная процедура против старения",
-    discount: "3500₽",
-    validUntil: "акция сентября",
+    title: "Перманентный макияж бровей",
+    description: "Натуральный татуаж бровей с коррекцией",
+    discount: "-15%",
+    validUntil: "для новых клиентов",
     color: "primary"
   },
   {
     id: 4,
-    title: "Пробное посещение массажа",
-    description: "Первый массаж тела со скидкой",
-    discount: "-1000₽",
-    validUntil: "для новых клиентов",
-    color: "primary"
-  },
-  {
-    id: 5,
-    title: "Спортивный массаж (3 сеанса)",
-    description: "Курс спортивного массажа для восстановления",
-    discount: "11000₽",
-    validUntil: "вместо 13500₽",
-    color: "primary"
-  },
-  {
-    id: 6,
-    title: "Безлимитный абонемент",
-    description: "Все массажи по телу до конца 2025 года",
-    discount: "60000₽",
-    validUntil: "до конца 2025",
-    color: "primary"
-  },
-  {
-    id: 7,
-    title: "Первая процедура маникюра",
-    description: "Скидка 5% на любой маникюр и педикюр для новых клиентов",
-    discount: "-5%",
-    validUntil: "для новых клиентов",
-    color: "accent"
-  },
-  {
-    id: 8,
-    title: "Комплекс маникюр + педикюр",
-    description: "Маникюр с покрытием + педикюр с покрытием",
-    discount: "-10%",
-    validUntil: "экономия 400₽",
+    title: "Ламинирование + окрашивание ресниц",
+    description: "Комплекс для выразительного взгляда",
+    discount: "2500₽",
+    validUntil: "вместо 3200₽",
     color: "secondary"
   },
   {
-    id: 9,
-    title: "Классический массаж спины (3 сеанса)",
-    description: "Курс классического массажа спины",
-    discount: "5500₽",
-    validUntil: "вместо 7500₽",
-    color: "primary"
+    id: 5,
+    title: "Маникюр + педикюр + покрытие",
+    description: "Комплексный уход за руками и ногами",
+    discount: "3500₽",
+    validUntil: "вместо 4500₽",
+    color: "accent"
   },
   {
-    id: 10,
-    title: "Парный массаж (1 сеанс)",
-    description: "Парный массаж для двоих",
+    id: 6,
+    title: "Безлимитный солярий на месяц",
+    description: "Неограниченное количество посещений солярия",
     discount: "5000₽",
-    validUntil: "вместо 6500₽",
-    color: "accent"
+    validUntil: "до конца года",
+    color: "primary"
   }
 ];
 
@@ -111,7 +79,7 @@ export function PromoCardSlider() {
   const handleCardClick = (card: PromoCard) => {
     const message = `Здравствуйте! Меня интересует акция "${card.title}" (${card.discount}) - ${card.description}. Подскажите, пожалуйста, подробности!`;
     const encodedMessage = encodeURIComponent(message);
-    window.open(`https://wa.me/79340395909?text=${encodedMessage}`, '_blank');
+    window.open(`https://wa.me/79937775559?text=${encodedMessage}`, '_blank');
   };
 
   const startAutoPlay = () => {
